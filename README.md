@@ -125,6 +125,7 @@ No modules.
 | <a name="input_business_unit"></a> [business\_unit](#input\_business\_unit) | Area of the MOJ responsible for the service | `string` | n/a | yes |
 | <a name="input_canned_lifecycle_policy"></a> [canned\_lifecycle\_policy](#input\_canned\_lifecycle\_policy) | A canned lifecycle policy to remove tagged or untagged images | `map(any)` | `null` | no |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | (Optional) Whether the ECR should have deletion protection enabled for non-empty registry. Set this to false if you intend to delete your ECR resource or namespace. NOTE: PR owner has responsibility to ensure that no other environments are sharing this ECR. Defaults to true. | `bool` | `true` | no |
+| <a name="input_enable_irsa"></a> [enable\_irsa](#input\_enable\_irsa) | Enable creation of IRSA resources for ECR read-only credentials (for service pod maintenance etc). Defaults to false | `bool` | `false` | no |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Environment name | `string` | n/a | yes |
 | <a name="input_github_actions_prefix"></a> [github\_actions\_prefix](#input\_github\_actions\_prefix) | String prefix for GitHub Actions variable and secrets key | `string` | `""` | no |
 | <a name="input_github_environments"></a> [github\_environments](#input\_github\_environments) | GitHub environment in which to create github actions secrets | `list(string)` | `[]` | no |
@@ -141,7 +142,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_irsa_policy_arn"></a> [irsa\_policy\_arn](#output\_irsa\_policy\_arn) | IAM policy ARN for access to the container repository |
+| <a name="output_irsa_policy_arn"></a> [irsa\_policy\_arn](#output\_irsa\_policy\_arn) | IAM policy ARN for pod access to the container repository. We're nulling the value if module call doesnt enable irsa. |
 | <a name="output_repo_arn"></a> [repo\_arn](#output\_repo\_arn) | ECR repository ARN |
 | <a name="output_repo_url"></a> [repo\_url](#output\_repo\_url) | ECR repository URL |
 <!-- END_TF_DOCS -->

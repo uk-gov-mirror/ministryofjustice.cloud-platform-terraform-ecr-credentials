@@ -40,9 +40,25 @@ See the [examples/](examples/) folder for more information.
 
 ## Team name caveat
 
-This module utilises your environemnt `team_name` variable in the naming of your ECR repository, in the format `<var.team_name>-<var.repo_name>`. This historically introduced an issue whereby a team name change would result in Terraform forcefully replacing the ECR repository. To get around this issue, a [lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle) `ignore_changes` block has been introduced, so that team name changes can be made without causing this issue.
+This module utilises your environment `team_name` variable in the naming of your ECR repository, in the format `<var.team_name>-<var.repo_name>`. This historically introduced an issue whereby a team name change would result in Terraform forcefully replacing the ECR repository. To get around this issue, a [lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle) `ignore_changes` block has been introduced, so that team name changes can be made without causing this issue.
 
 However, its important to note that if you do change the team name in your environment variables, it will not be reflected in the ECR repository name. If you want to update the name, you will need to look at deleting and recreating your ECR respository. 
+
+## IMPORTANT - Release 8.0.0 changes:
+
+## IRSA policy
+
+If you want to be able to query the AWS ECR API from your namespace (for example via the [Cloud Platform AWS CLI service pod](https://github.com/ministryofjustice/cloud-platform-terraform-service-pod)), then you'll need to pass in the following argument to your module call:
+
+```
+module "ecr" {
+    ...
+    ...
+    enable_irsa = true
+}
+```
+
+This change has been introduced to support Cloud Platform's effort in reducing the count of unused IAM policies 
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -109,6 +125,7 @@ No modules.
 | <a name="input_business_unit"></a> [business\_unit](#input\_business\_unit) | Area of the MOJ responsible for the service | `string` | n/a | yes |
 | <a name="input_canned_lifecycle_policy"></a> [canned\_lifecycle\_policy](#input\_canned\_lifecycle\_policy) | A canned lifecycle policy to remove tagged or untagged images | `map(any)` | `null` | no |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | (Optional) Whether the ECR should have deletion protection enabled for non-empty registry. Set this to false if you intend to delete your ECR resource or namespace. NOTE: PR owner has responsibility to ensure that no other environments are sharing this ECR. Defaults to true. | `bool` | `true` | no |
+| <a name="input_enable_irsa"></a> [enable\_irsa](#input\_enable\_irsa) | Enable creation of IRSA resources for ECR read-only credentials (for service pod maintenance etc). Defaults to false | `bool` | `false` | no |
 | <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Environment name | `string` | n/a | yes |
 | <a name="input_github_actions_prefix"></a> [github\_actions\_prefix](#input\_github\_actions\_prefix) | String prefix for GitHub Actions variable and secrets key | `string` | `""` | no |
 | <a name="input_github_environments"></a> [github\_environments](#input\_github\_environments) | GitHub environment in which to create github actions secrets | `list(string)` | `[]` | no |
@@ -125,7 +142,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_irsa_policy_arn"></a> [irsa\_policy\_arn](#output\_irsa\_policy\_arn) | IAM policy ARN for access to the container repository |
+| <a name="output_irsa_policy_arn"></a> [irsa\_policy\_arn](#output\_irsa\_policy\_arn) | IAM policy ARN for pod access to the container repository. We're nulling the value if module call doesnt enable irsa. |
 | <a name="output_repo_arn"></a> [repo\_arn](#output\_repo\_arn) | ECR repository ARN |
 | <a name="output_repo_url"></a> [repo\_url](#output\_repo\_url) | ECR repository URL |
 <!-- END_TF_DOCS -->

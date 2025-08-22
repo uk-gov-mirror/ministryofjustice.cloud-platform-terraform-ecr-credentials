@@ -59,6 +59,15 @@ variable "deletion_protection" {
 }
 
 ########
+# IRSA #
+########
+variable "enable_irsa" {
+  description = "Enable creation of IRSA resources for ECR read-only credentials (for service pod maintenance etc). Defaults to false"
+  type        = bool
+  default     = false
+}
+
+########
 # Tags #
 ########
 variable "business_unit" {

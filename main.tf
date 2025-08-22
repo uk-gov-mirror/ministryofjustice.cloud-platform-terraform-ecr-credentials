@@ -111,7 +111,9 @@ resource "aws_ecr_lifecycle_policy" "canned" {
 # Short-lived credentials (IRSA)
 # Note: This has a separate policy to OIDC as this should only be used for
 # inspecting images from a service pod rather than pushing an image
+
 data "aws_iam_policy_document" "irsa" {
+  count = var.enable_irsa ? 1 : 0
   version = "2012-10-17"
 
   statement {
@@ -152,9 +154,10 @@ data "aws_iam_policy_document" "irsa" {
 }
 
 resource "aws_iam_policy" "irsa" {
+  count  = var.enable_irsa ? 1 : 0
   name   = "${local.oidc_identifier}-irsa"
   path   = "/cloud-platform/ecr/"
-  policy = data.aws_iam_policy_document.irsa.json
+  policy = data.aws_iam_policy_document.irsa[0].json
   tags   = local.default_tags
 }
 

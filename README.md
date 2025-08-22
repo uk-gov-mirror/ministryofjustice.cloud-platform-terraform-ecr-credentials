@@ -40,9 +40,25 @@ See the [examples/](examples/) folder for more information.
 
 ## Team name caveat
 
-This module utilises your environemnt `team_name` variable in the naming of your ECR repository, in the format `<var.team_name>-<var.repo_name>`. This historically introduced an issue whereby a team name change would result in Terraform forcefully replacing the ECR repository. To get around this issue, a [lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle) `ignore_changes` block has been introduced, so that team name changes can be made without causing this issue.
+This module utilises your environment `team_name` variable in the naming of your ECR repository, in the format `<var.team_name>-<var.repo_name>`. This historically introduced an issue whereby a team name change would result in Terraform forcefully replacing the ECR repository. To get around this issue, a [lifecycle](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle) `ignore_changes` block has been introduced, so that team name changes can be made without causing this issue.
 
 However, its important to note that if you do change the team name in your environment variables, it will not be reflected in the ECR repository name. If you want to update the name, you will need to look at deleting and recreating your ECR respository. 
+
+## IMPORTANT - Release 8.0.0 changes:
+
+## IRSA policy
+
+If you want to be able to query the AWS ECR API from your namespace (for example via the [Cloud Platform AWS CLI service pod](https://github.com/ministryofjustice/cloud-platform-terraform-service-pod)), then you'll need to pass in the following argument to your module call:
+
+```
+module "ecr" {
+    ...
+    ...
+    enable_irsa = true
+}
+```
+
+This change has been introduced to support Cloud Platform's effort in reducing the count of unused IAM policies 
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
